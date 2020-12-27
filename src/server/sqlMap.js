@@ -12,11 +12,12 @@ const sqlMap = {
   selectGoods: 'select * from goodsinfo where goodsId = ?',
   selectGoodsDetail: 'select * from goodsstatusinfo where goodsId = ? order by alertTime desc',
   deleteGoods: 'delete from goodsinfo where goodsId = ?',
+  deleteGoodsStatus: 'delete from goodsstatusinfo where goodsId = ?',
   addGoods: 'insert into goodsinfo VALUES(?,?,?,?,?,?,?,?)',
   addGoodsStatus: 'insert into goodsstatusinfo VALUES(?,?,?,?,?,?,?)',
   upateGoodsInfo: 'update goodsinfo SET goodsName = ?,goodsStatus = ?,goodsCount = ?,goodsDetail = ? where goodsId = ?',
   //个人信息
-  alertInfo: 'UPDATE userinfo SET userName = ?,age = ?,sex = ?,introduction = ?,phone = ?,birthday = ? WHERE userNo = ?',
-  alertPassword: 'UPDATE userinfo SET passwor = ? WHERE userNo = ?',
+  alertInfo: 'UPDATE userinfo SET userName = ?,age = ?,sex = ?,introduction = ?,phone = ?,birthday = ?,picUrl = ? WHERE userNo = ?',
+  alertPassword: 'UPDATE userinfo SET password = ? WHERE userNo = ?',
 }
 module.exports = sqlMap;

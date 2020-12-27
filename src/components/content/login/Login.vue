@@ -77,6 +77,7 @@ export default {
           } else if (status == 2) {
             this.isShow = "passwordErr";
           } else if (status == 3) {
+            console.log(res.data.list[0]);
             this.$store.state.userInfo = res.data.list[0];
             this.$router.replace("/main");
           }

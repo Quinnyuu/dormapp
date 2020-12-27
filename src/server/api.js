@@ -6,6 +6,7 @@ exports.login = (req, res) => {
     let userNo = req.body.userNo;
     let password = req.body.password;
     db.base(sqlMap.selectUser, userNo, (result) => {
+        console.log(result);
         if(!result.length){
             return res.json({ status: 1, msg: '登录失败' })
         }else{
@@ -43,7 +44,6 @@ exports.selectArticle = (req, res) => {
     const dormBuilding = req.body.dormBuilding ? req.body.dormBuilding : null;
     const dormNo = req.body.dormNo ? req.body.dormNo : null;
     db.base(sqlMap.selectArticle, [dormBuilding, dormNo], (result) => {
-        console.log(result);
         if (result.length !== 0) {
             return res.json({ status: 1, msg: '查找成功', list: result})
         } else {
@@ -61,7 +61,6 @@ exports.addArticles = (req, res) => {
     const dormBuilding = req.body.dormBuilding ? req.body.dormBuilding : null;
     const dormNo = req.body.dormNo ? req.body.dormNo : null;
     db.base(sqlMap.addArticles, [articleId, articleCont ,userNo , time, likeCount, dormBuilding, dormNo], (result) => {
-        console.log(result);
         if (result.affectedRows !== 0) {
             return res.json({ status: 1, msg: '添加成功'})
         } else {
@@ -96,7 +95,6 @@ exports.selectGoods = (req, res) => {
         }
     } else {
         db.base(sqlMap.selectGoods, [goodsId], (result) => {
-            console.log(result);
             if (result.length !== 0) {
                 return res.json({ status: 1, msg: '查找成功', list: result})
             } else {
@@ -109,7 +107,6 @@ exports.selectGoods = (req, res) => {
 exports.selectGoodsDetail = (req, res) => {
     const goodsId = req.body.goodsId ? req.body.goodsId : null;
     db.base(sqlMap.selectGoodsDetail, [goodsId], (result) => {
-        console.log(result);
         if (result.length !== 0) {
             return res.json({ status: 1, msg: '查找成功', list: result})
         } else {
@@ -121,9 +118,14 @@ exports.selectGoodsDetail = (req, res) => {
 exports.deleteGoods = (req, res) => {
     const goodsId = req.query.goodsId ? req.query.goodsId : null;
     db.base(sqlMap.deleteGoods, [goodsId], (result) => {
-        console.log(result.affectedRows);
         if (result.affectedRows !== 0) {
-            return res.json({ status: 1, msg: '删除成功'})
+            db.base(sqlMap.deleteGoodsStatus, [goodsId], (result) => { //删除相关状态
+                if (result.affectedRows !== 0) {
+                    return res.json({ status: 1, msg: '删除成功'})
+                } else {
+                    return res.json({ status: 2, msg: '删除失败'})
+                }
+            })
         } else {
             return res.json({ status: 2, msg: '删除失败'})
         }
@@ -137,7 +139,6 @@ exports.upateGoodsInfo = (req, res) => {
     const goodsDetail = req.body.goodsDetail ? req.body.goodsDetail : null;
     const goodsId = req.body.goodsId ? req.body.goodsId : null;
     db.base(sqlMap.upateGoodsInfo, [goodsName, goodsStatus ,goodsCount , goodsDetail, goodsId], (result) => {
-        console.log(result);
         if (result.affectedRows !== 0) {
             return res.json({ status: 1, msg: '修改成功'})
         } else {
@@ -156,7 +157,6 @@ exports.addGoods = (req, res) => {
     const dormNo = req.body.dormNo ? req.body.dormNo : null;
     const goodsPic = req.body.goodsPic ? req.body.goodsPic : null;
     db.base(sqlMap.addGoods, [goodsId, goodsName ,goodsStatus , goodsCount, goodsDetail, dormBuilding, dormNo, goodsPic], (result) => {
-        console.log(result);
         if (result.affectedRows !== 0) {
             return res.json({ status: 1, msg: '添加成功'})
         } else {
@@ -174,11 +174,53 @@ exports.addGoodsStatus = (req, res) => {
     const option = req.body.option ? req.body.option : null;
     const detail = req.body.detail ? req.body.detail : null;
     db.base(sqlMap.addGoodsStatus, [goodsStatusId, goodsId ,alertTime , userNo, userName, option, detail], (result) => {
-        console.log(result);
         if (result.affectedRows !== 0) {
             return res.json({ status: 1, msg: '添加成功'})
         } else {
             return res.json({ status: 2, msg: '添加失败'})
+        }
+    })
+}
+
+//查找用户
+exports.selectUser = (req, res) => {
+    const userNo = req.body.userNo;
+    db.base(sqlMap.selectUser, userNo, (result) => {
+        console.log(result);
+        if(result.length !== 0){
+            return res.json({ status: 1, msg: '查找成功', list: result})
+        }else{
+            return res.json({ status: 2, msg: '查找失败' })
+        }
+    })
+}
+//修改个人信息
+exports.alertInfo = (req, res) => {
+    const userName = req.body.userName ? req.body.userName : null;
+    const age = req.body.age ? req.body.age : null;
+    const sex = req.body.sex ? req.body.sex : null;
+    const introduction = req.body.introduction ? req.body.introduction : null;
+    const phone = req.body.phone ? req.body.phone : null;
+    const birthday = req.body.birthday ? req.body.birthday : null;
+    const picUrl = req.body.picUrl ? req.body.picUrl : null;
+    const userNo = req.body.userNo ? req.body.userNo : null;
+    db.base(sqlMap.alertInfo, [userName, age ,sex , introduction, phone, birthday, picUrl, userNo], (result) => {
+        if (result.affectedRows !== 0) {
+            return res.json({ status: 1, msg: '修改成功'})
+        } else {
+            return res.json({ status: 2, msg: '修改失败'})
+        }
+    })
+}
+//修改密码
+exports.alertPassword = (req, res) => {
+    const password = req.body.password ? req.body.password : null;
+    const userNo = req.body.userNo ? req.body.userNo : null;
+    db.base(sqlMap.alertPassword, [password, userNo], (result) => {
+        if (result.affectedRows !== 0) {
+            return res.json({ status: 1, msg: '修改成功'})
+        } else {
+            return res.json({ status: 2, msg: '修改失败'})
         }
     })
 }

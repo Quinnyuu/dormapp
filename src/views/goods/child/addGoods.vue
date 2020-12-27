@@ -17,22 +17,28 @@
             <van-stepper v-model="goodsCount" />
           </template>
         </van-field>
-        <van-field v-model="goodsState" label="状态" @click="pickerDialog = true"/>
-        <van-picker
-          v-if="pickerDialog"
-          title="状态选择"
-          show-toolbar
-          :columns="columns"
-          @confirm="onConfirm"
-          @cancel="onCancel"
-        />
+        <van-field v-model="goodsStatusDetail" label="状态" @click="pickerDialog = true"/>
+        <van-popup
+          v-model="pickerDialog"
+          position="bottom"
+          :style="{ height: '40%' }"
+        >
+          <van-picker
+            v-if="pickerDialog"
+            title="状态选择"
+            show-toolbar
+            :columns="columns"
+            @confirm="onConfirm"
+            @cancel="onCancel"
+          />
+        </van-popup>
         <van-field
             v-model="goodsDetail"
-            rows="2"
+            rows="4"
             autosize
             label="物品描述"
             type="textarea"
-            maxlength="50"
+            maxlength="100"
             placeholder="请输入物品描述"
             show-word-limit
             />
@@ -50,6 +56,7 @@ export default {
         goodsName: '',
         goodsCount: 1,
         goodsState: '',
+        goodsStatusDetail: '',
         goodsDetail: '',
         pickerDialog: false,
         columns: ['使用中','未使用','库存不足','已损坏']
@@ -57,7 +64,8 @@ export default {
   },
   methods: {
     onConfirm(value, index) { 
-      this.goodsState = index;
+      this.goodsState = index.toString();
+      this.goodsStatusDetail = this.columns[index]
       this.pickerDialog = false;
     },
     onCancel() {
@@ -86,6 +94,7 @@ export default {
         if(res.data.status == 1) {
           this.$toast.success(res.data.msg)
           this.addGoodsStatus()
+          this.$router.replace('/main/goods')
         }else {
           this.$toast.fail(res.data.msg)
         }
@@ -101,7 +110,7 @@ export default {
             alertTime: new Date().Format("yyyy-MM-dd HH:mm:ss"),
             userNo: this.$store.state.userInfo.userNo,
             userName: this.$store.state.userInfo.username,
-            option: 4
+            option: '4'
           },
         }).then((res) => {
           console.log(res);

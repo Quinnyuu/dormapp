@@ -108,6 +108,7 @@ export default {
   box-shadow: none;
   outline: none;
   background: transparent;
+  padding: 5px;
   resize: none;
   box-sizing: border-box;
   color: #fff;

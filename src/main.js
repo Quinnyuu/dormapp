@@ -22,8 +22,8 @@ Vue.use(Stepper);
 Vue.use(Picker);
 Vue.use(Field);
 Vue.use(Uploader);
-Vue.use(Radio);
 Vue.use(RadioGroup);
+Vue.use(Radio);
 Vue.use(DatetimePicker);
 Vue.use(Popup);
 

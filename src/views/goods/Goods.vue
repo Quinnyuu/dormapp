@@ -21,11 +21,11 @@
                 <div class="goods-name">{{ item.goodsName }}</div>
                 <div class="goods-count">数量：{{ item.goodsCount }}</div>
                 <div class="goods-status">
-                  <div class="used" v-if="item.goodsStatus == 0">正在使用</div>
-                  <div class="not-used" v-else-if="item.goodsStatus == 1">
+                  <div class="used" v-if="item.goodsStatus == '0'">正在使用</div>
+                  <div class="not-used" v-else-if="item.goodsStatus == '1'">
                     未使用
                   </div>
-                  <div class="lack" v-else-if="item.goodsStatus == 2">
+                  <div class="lack" v-else-if="item.goodsStatus == '2'">
                     库存不足
                   </div>
                   <div class="broken" v-else>已损坏</div>
@@ -34,7 +34,7 @@
             </el-col>
           </el-row>
         </van-tab>
-        <van-tab title="未使用">
+        <van-tab title="使用中">
           <el-row :gutter="10">
             <el-col :span="12" :key="index" v-for="(item, index) in goodsList">
               <div class="grid-content"  @click="goodsClick(item.goodsId)">
@@ -45,7 +45,7 @@
             </el-col>
           </el-row>
         </van-tab>
-        <van-tab title="使用中">
+        <van-tab title="未使用">
           <el-row :gutter="10">
             <el-col :span="12" :key="index" v-for="(item, index) in goodsList">
               <div class="grid-content"  @click="goodsClick(item.goodsId)">

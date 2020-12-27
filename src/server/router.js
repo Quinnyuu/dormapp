@@ -34,4 +34,11 @@ router.post('/addGoods', api.addGoods)
 //公共物品添加详细信息功能
 router.post('/addGoodsStatus', api.addGoodsStatus)
 
+//修改个人信息
+router.post('/alertInfo', api.alertInfo)
+//查找用户
+router.post('/selectUser', api.selectUser)
+//修改密码
+router.post('/alertPassword', api.alertPassword)
+
 module.exports = router

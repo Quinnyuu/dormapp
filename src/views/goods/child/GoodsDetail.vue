@@ -21,22 +21,27 @@
           </div>
         <div class="goods-status">
           状态：
-          <span v-if="cGoods.goodsStatus == 0" class="used">使用中</span>
-          <span v-else-if="cGoods.goodsStatus == 1" class="not-used"
+          <span v-if="cGoods.goodsStatus == '0'" class="used">使用中</span>
+          <span v-else-if="cGoods.goodsStatus == '1'" class="not-used"
             >未使用</span
           >
-          <span v-else-if="cGoods.goodsStatus == 2">库存不足</span>
+          <span v-else-if="cGoods.goodsStatus == '2'">库存不足</span>
           <span v-else class="broken">已损坏</span>
         </div>
-        <i v-if="isEdit" class="iconfont icon-dianzan" @click="pickerShow"></i>
-        <van-picker
-          v-if="pickerDialog"
-          title="状态选择"
-          show-toolbar
-          :columns="columns"
-          @confirm="onConfirm"
-          @cancel="onCancel"
-        />
+        <i v-if="isEdit" class="iconfont icon-dianzan" @click="pickerDialog = true"></i>
+        <van-popup
+          v-model="pickerDialog"
+          position="bottom"
+          :style="{ height: '40%' }"
+        >
+          <van-picker
+            title="状态选择"
+            show-toolbar
+            :columns="columns"
+            @confirm="onConfirm"
+            @cancel="onCancel"
+          />
+        </van-popup>
       </div>
       <div class="goods-detail">描述：
         <textarea v-if="isEdit" v-model="goodsDetail"></textarea>
@@ -71,7 +76,7 @@ export default {
       cGoodsId: '',
       cGoods: {}, // 当前物品信息
       activities: [], // 时间轴中的信息
-      pickerDialog: false, // 删除确认框
+      pickerDialog: false, // 状态选择框
       isEdit: false, // 是否处于编辑状态
       goodsCount: null, // 修改框中的物品数量
       goodsName: null, // 修改框中的物品名
@@ -79,7 +84,7 @@ export default {
       goodsStatus: null, // 原先的状态
       option: null,
       editDetail: null,
-      columns: ['未使用','使用中','库存不足','已损坏']
+      columns: ['使用中','未使用','库存不足','已损坏']
     };
   },
   methods: {
@@ -91,12 +96,11 @@ export default {
             goodsId: this.cGoodsId,
           },
         }).then((res) => {
-          console.log(res);
           if(res.data.status == 1) {
             if(res.data.list){
               this.cGoods = res.data.list[0];
               this.goodsName = this.cGoods.goodsName ? this.cGoods.goodsName: '';
-              this.goodsStatus = this.cGoods.goodsStatus ? this.cGoods.goodsStatus: 0;
+              this.goodsStatus = this.cGoods.goodsStatus ? this.cGoods.goodsStatus: '0';
               this.goodsCount = this.cGoods.goodsCount ? this.cGoods.goodsCount: 1;
               this.goodsDetail = this.cGoods.goodsDetail ? this.cGoods.goodsDetail: '';
             }
@@ -119,23 +123,23 @@ export default {
               let content = item.username + ' '; 
               let color = '';
               switch(item.option) {
-                case 0: content += '添加了此物品' + item.detail +'件库存';color="#386e4c";break;
-                case 1: content += '减少了此物品' + item.detail +'件库存';color="#e7695c";break;
-                case 2: 
+                case '0': content += '添加了此物品' + item.detail +'件库存';color="#386e4c";break;
+                case '1': content += '减少了此物品' + item.detail +'件库存';color="#e7695c";break;
+                case '2': 
                   content += '将此物品的状态修改为';
-                  if (item.detail == 0) {
+                  if (item.detail == '0') {
                     content += '使用中'
-                  }else if (item.detail == 1) {
+                  }else if (item.detail == '1') {
                     content += '未使用'
-                  }else if (item.detail == 2) {
+                  }else if (item.detail == '2') {
                     content += '库存不足'
                   }else {
                     content += '已损坏'
                   };
                   color='#f4ce6b';
                   break;
-                case 3: content += '修改了此物品的相关信息';color='#467f5c';break;
-                case 4: content += '为小屋添加了此物品'
+                case '3': content += '修改了此物品的相关信息';color='#467f5c';break;
+                case '4': content += '为小屋添加了此物品'
               }
               this.activities.push({content: content, timestamp: item.alertTime, color: color});
             });
@@ -169,13 +173,10 @@ export default {
         .catch(() => {
         });
     },
-    pickerShow() { // 删除确认框
-      this.pickerDialog = true;
-    },
     onConfirm(value, index) { // 状态改变
       this.pickerDialog = false;
-      this.cGoods.goodsStatus = index;
-      this.editDetail = index;
+      this.cGoods.goodsStatus = index.toString();
+      this.editDetail = index.toString();
     },
     onCancel() {
       this.pickerDialog = false;
@@ -184,6 +185,7 @@ export default {
       this.isEdit = true;
     },
     editInfo() {
+      this.cGoods.goodsDetail = this.cGoods.goodsDetail ? this.cGoods.goodsDetail : ''
       if( this.goodsName == this.cGoods.goodsName &&
         this.goodsCount == this.cGoods.goodsCount && 
         this.goodsDetail == this.cGoods.goodsDetail &&
@@ -206,17 +208,20 @@ export default {
           if (res.data.status == 1) {
               this.isEdit = false;
               this.$toast.success(res.data.msg);
+              console.log(this.goodsDetail, this.cGoods.goodsDetail);
               if(this.goodsName != this.cGoods.goodsName || this.goodsDetail != this.cGoods.goodsDetail) {
-                this.option = 3;
+                console.log(111);
+                this.option = '3';
                 this.addGoodsStatus(); // 编辑信息同时添加状态
               }
               if (this.goodsStatus != this.cGoods.goodsStatus) {
-                this.option = 2;
+                console.log(222);
+                this.option = '2';
                 this.addGoodsStatus(); 
               }
               if (this.goodsCount != this.cGoods.goodsCount) {
                 console.log(333);
-                this.option = this.goodsCount > this.cGoods.goodsCount ? 0 : 1;
+                this.option = this.goodsCount > this.cGoods.goodsCount ? '0' : '1';
                 console.log(this.option);
                 this.editDetail = Math.abs(parseInt(this.goodsCount) - parseInt(this.cGoods.goodsCount));
                 this.addGoodsStatus(); 
@@ -229,6 +234,8 @@ export default {
         })
     },
     addGoodsStatus() { // 添加状态信息
+    console.log('add');
+    console.log(this.option);
       request({
           method: "post",
           url: "/addGoodsStatus",
