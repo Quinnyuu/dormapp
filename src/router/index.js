@@ -1,23 +1,72 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
-
+import Talk from 'views/talk/Talk'
+import Goods from 'views/goods/Goods'
+import Mine from 'views/mine/Mine'
+import Roommates from 'views/roommates/Roommates'
+import Main from 'views/main/Main'
+import Login from 'components/content/login/Login'
+import Regist from 'components/content/regist/Regist'
+import Guide from 'views/guide/Guide'
+import addGoods from 'views/goods/child/addGoods'
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
-    component: Home
+    path: '',
+    redirect: '/guide'
   },
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  }
+    path: '/guide',
+    name: 'Guide',
+    component: Guide,
+    redirect: '/guide/login',
+    children: [
+      {
+        path: 'login',
+        name: 'Login',
+        component: Login
+      },
+      {
+        path: 'regist',
+        name: 'Regist',
+        component: Regist
+      }
+    ]
+  },
+  {
+    path: '/main',
+    name: 'Main',
+    component: Main,
+    redirect: '/main/talk',
+    children: [
+      {
+        path: 'talk',
+        name: 'Talk',
+        component: Talk
+      },
+      {
+        path: 'goods',
+        name: 'Goods',
+        component: Goods
+      },
+      {
+        path: 'mine',
+        name: 'Mine',
+        component: Mine
+      },
+      {
+        path: 'roommates',
+        name: 'Roommates',
+        component: Roommates
+      },
+      {
+        path: 'addGoods',
+        name: 'AddGoods',
+        component: addGoods
+      },
+    ]
+  },
 ]
 
 const router = new VueRouter({
